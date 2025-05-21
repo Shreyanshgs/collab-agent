@@ -4,10 +4,10 @@
 
 ## Features
 
-- 🎙️ Record audio directly in-browser or upload `.wav` files
-- ✍️ Real-time transcription using Whisper
-- 🧠 Automatic summary generation with Google Gemini (Gemini 2.0 Flash)
-- 🌐 Full-stack app with Next.js frontend and FastAPI backend
+- Record audio directly in-browser or upload `.wav` files
+- Real-time transcription using Whisper
+- Automatic summary generation with Google Gemini (Gemini 2.0 Flash)
+- Full-stack app with Next.js frontend and FastAPI backend
 
 ## Tech Stack
 
