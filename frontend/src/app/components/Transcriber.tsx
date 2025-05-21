@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import React from "react";
 
 export default function Transcriber() {
   // trancript holds the resulting text from the backend
