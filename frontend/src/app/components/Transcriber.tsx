@@ -99,7 +99,7 @@ export default function Transcriber() {
 
     <div className="p-6 space-y-4">
       <div className="flex justify-center items-center">
-        <label className="text-center bg-blue-500 text-white w-60  py-2 rounded cursor-pointer hover:bg-green-400">
+        <label className="text-center bg-red-500 text-white w-60  py-2 rounded cursor-pointer hover:bg-green-400">
           Choose File
           <input
             type="file"
