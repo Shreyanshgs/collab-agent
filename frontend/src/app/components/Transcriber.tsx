@@ -19,6 +19,10 @@ export default function Transcriber() {
   const [summary, setSummary] = useState("");
   const [tasks, setTasks] = useState<string[]>([]);
   const [decisions, setDecisions] = useState<string[]>([]);
+  const formatTranscript = (raw: string) => {
+    const lines = raw.split(/(?=SPEAKER_\d{2}:)/g); // split when speaker appears
+    return lines.map((line, idx) => <p key={idx} className="mb-2">{line.trim()}</p>);
+  };
 
   // begin recording user audio by turning on mic and setting up variables and objects to handle the input
   const startRecording = async () => {
@@ -132,9 +136,10 @@ export default function Transcriber() {
           {loading ? (
             <p>Transcribing...</p>
           ) : (
-            <p>
-              <strong>Transcript:</strong> {transcript}
-            </p>
+            <div>
+              <strong>Transcript:</strong>
+              <div className="mt-2 space-y-1">{formatTranscript(transcript)}</div>
+            </div>
           )}
         </div>
       </div>
@@ -147,7 +152,7 @@ export default function Transcriber() {
               <div className="max-w-3xl mx-auto">
                   <div className="text-black border rounded p-4 bg-blue-100 w-full mt-4">
                     <strong>Summary:</strong>
-                    {summary}
+                   {summary}
                   </div>
                 </div>
 
