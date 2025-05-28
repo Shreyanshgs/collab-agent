@@ -17,6 +17,8 @@ export default function Transcriber() {
   // streamRef holds the live mic input stream so we have the ability to stop using it when the user is done recording
   const streamRef = useRef<MediaStream | null>(null);
   const [summary, setSummary] = useState("");
+  const [tasks, setTasks] = useState<string[]>([]);
+  const [decisions, setDecisions] = useState<string[]>([]);
 
   // begin recording user audio by turning on mic and setting up variables and objects to handle the input
   const startRecording = async () => {
@@ -50,7 +52,9 @@ export default function Transcriber() {
         });
         const data = await res.json();
         setTranscript(data.text);
-        setSummary(data.summary);
+        setSummary(data.summary.summary);  // ✅ access nested summary string
+        setTasks(data.summary.tasks || []);
+        setDecisions(data.summary.decisions || []);
       } catch (err) {
         setTranscript("Transcription failed.");
       } finally {
@@ -88,7 +92,9 @@ export default function Transcriber() {
       });
       const data = await res.json();
       setTranscript(data.text);
-      setSummary(data.summary);
+      setSummary(data.summary.summary);  // ✅ access nested summary string
+      setTasks(data.summary.tasks || []);
+      setDecisions(data.summary.decisions || []);
     } catch {
       setTranscript("Transcription failed.")
     } finally {
@@ -137,13 +143,54 @@ export default function Transcriber() {
           {loading ? (
             <p>Summarizing...</p>
           ) : (
-            <p>
-              <strong>Summary:</strong> {summary}
-            </p>
+            <>
+              <div className="max-w-3xl mx-auto">
+                  <div className="text-black border rounded p-4 bg-blue-100 w-full mt-4">
+                    <strong>Summary:</strong>
+                    {summary}
+                  </div>
+                </div>
+
+              {tasks.length > 0 && (
+                <div className="max-w-3xl mx-auto">
+                  <div className="text-black border rounded p-4 bg-yellow-100 w-full mt-4">
+                    <strong>Tasks:</strong>
+                    <ul className="list-disc ml-4 mt-2">
+                      {tasks.map((task, idx) => (
+                        <li key={idx}>{task}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+
+              {decisions.length > 0 && (
+                <div className="max-w-3xl mx-auto">
+                  <div className="text-black border rounded p-4 bg-green-100 w-full mt-4">
+                    <strong>Decisions:</strong>
+                    <ul className="list-disc ml-4 mt-2">
+                      {decisions.map((decision, idx) => (
+                        <li key={idx}>{decision}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </>
+
           )}
         </div>
       </div>
-
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
