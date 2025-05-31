@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import React from "react";
 
-export default function Transcriber() {
+export function Transcriber() {
   // trancript holds the resulting text from the backend
   const [transcript, setTranscript] = useState("");
   // recording is a boolean that shows if user is recording audio or not
@@ -107,86 +107,7 @@ export default function Transcriber() {
   }
 
   return (
-
-    <div className="p-6 space-y-4">
-      <div className="flex justify-center items-center">
-        <label className="text-center bg-red-500 text-white w-60  py-2 rounded cursor-pointer hover:bg-green-400">
-          Choose File
-          <input
-            type="file"
-            accept="audio/*"
-            onChange={(e) => {
-              if (e.target.files?.[0]) handleFileUpload(e.target.files[0]);
-            }}
-            className="hidden"
-          />
-        </label>
-      </div>
-      <div className="flex justify-center items-center">
-        <button
-          onClick={recording ? stopRecording : startRecording}
-          className="px-6 py-2 rounded bg-blue-600 text-white hover:bg-green-400 mb-2 mt-2"
-        >
-
-          {recording ? "Stop Recording" : "Start Recording"}
-        </button>
-      </div>
-      <div className="max-w-3xl mx-auto">
-        <div className="text-black border rounded p-4 bg-gray-100 w-full min-h-[150px]">
-          {loading ? (
-            <p>Transcribing...</p>
-          ) : (
-            <div>
-              <strong>Transcript:</strong>
-              <div className="mt-2 space-y-1">{formatTranscript(transcript)}</div>
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="max-w-3xl mx-auto">
-        <div className="text-black border rounded p-4 bg-gray-100 w-full min-h-[150px]">
-          {loading ? (
-            <p>Summarizing...</p>
-          ) : (
-            <>
-              <div className="max-w-3xl mx-auto">
-                  <div className="text-black border rounded p-4 bg-blue-100 w-full mt-4">
-                    <strong>Summary:</strong>
-                   {summary}
-                  </div>
-                </div>
-
-              {tasks.length > 0 && (
-                <div className="max-w-3xl mx-auto">
-                  <div className="text-black border rounded p-4 bg-yellow-100 w-full mt-4">
-                    <strong>Tasks:</strong>
-                    <ul className="list-disc ml-4 mt-2">
-                      {tasks.map((task, idx) => (
-                        <li key={idx}>{task}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
-
-              {decisions.length > 0 && (
-                <div className="max-w-3xl mx-auto">
-                  <div className="text-black border rounded p-4 bg-green-100 w-full mt-4">
-                    <strong>Decisions:</strong>
-                    <ul className="list-disc ml-4 mt-2">
-                      {decisions.map((decision, idx) => (
-                        <li key={idx}>{decision}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
-            </>
-
-          )}
-        </div>
-      </div>
-    </div>
+    <div></div>
   );
 }
 
@@ -199,3 +120,84 @@ export default function Transcriber() {
 
 
 
+
+
+// <div className="p-6 space-y-4">
+    //   <div className="flex justify-center items-center">
+    //     <label className="text-center bg-red-500 text-white w-60  py-2 rounded cursor-pointer hover:bg-green-400">
+    //       Choose File
+    //       <input
+    //         type="file"
+    //         accept="audio/*"
+    //         onChange={(e) => {
+    //           if (e.target.files?.[0]) handleFileUpload(e.target.files[0]);
+    //         }}
+    //         className="hidden"
+    //       />
+    //     </label>
+    //   </div>
+    //   <div className="flex justify-center items-center">
+    //     <button
+    //       onClick={recording ? stopRecording : startRecording}
+    //       className="px-6 py-2 rounded bg-blue-600 text-white hover:bg-green-400 mb-2 mt-2"
+    //     >
+
+    //       {recording ? "Stop Recording" : "Start Recording"}
+    //     </button>
+    //   </div>
+    //   <div className="max-w-3xl mx-auto">
+    //     <div className="text-black border rounded p-4 bg-gray-100 w-full min-h-[150px]">
+    //       {loading ? (
+    //         <p>Transcribing...</p>
+    //       ) : (
+    //         <div>
+    //           <strong>Transcript:</strong>
+    //           <div className="mt-2 space-y-1">{formatTranscript(transcript)}</div>
+    //         </div>
+    //       )}
+    //     </div>
+    //   </div>
+    //   <div className="max-w-3xl mx-auto">
+    //     <div className="text-black border rounded p-4 bg-gray-100 w-full min-h-[150px]">
+    //       {loading ? (
+    //         <p>Summarizing...</p>
+    //       ) : (
+    //         <>
+    //           <div className="max-w-3xl mx-auto">
+    //               <div className="text-black border rounded p-4 bg-blue-100 w-full mt-4">
+    //                 <strong>Summary:</strong>
+    //                {summary}
+    //               </div>
+    //             </div>
+
+    //           {tasks.length > 0 && (
+    //             <div className="max-w-3xl mx-auto">
+    //               <div className="text-black border rounded p-4 bg-yellow-100 w-full mt-4">
+    //                 <strong>Tasks:</strong>
+    //                 <ul className="list-disc ml-4 mt-2">
+    //                   {tasks.map((task, idx) => (
+    //                     <li key={idx}>{task}</li>
+    //                   ))}
+    //                 </ul>
+    //               </div>
+    //             </div>
+    //           )}
+
+    //           {decisions.length > 0 && (
+    //             <div className="max-w-3xl mx-auto">
+    //               <div className="text-black border rounded p-4 bg-green-100 w-full mt-4">
+    //                 <strong>Decisions:</strong>
+    //                 <ul className="list-disc ml-4 mt-2">
+    //                   {decisions.map((decision, idx) => (
+    //                     <li key={idx}>{decision}</li>
+    //                   ))}
+    //                 </ul>
+    //               </div>
+    //             </div>
+    //           )}
+    //         </>
+
+    //       )}
+    //     </div>
+    //   </div>
+    // </div>
