@@ -18,47 +18,80 @@
 
 
 ```mermaid
-flowchart TB
+graph TD
+    %% ------------------- STYLING -------------------
+    classDef deploymentNode fill:#eeeeee,stroke:#333,stroke-width:2px;
+    classDef component fill:#ffffff,stroke:#2b6cb0,stroke-width:2px;
+    classDef subComponent fill:#ebf8ff,stroke:#4299e1,stroke-width:1px,stroke-dasharray: 0;
+    classDef database fill:#ffffff,stroke:#2b6cb0,stroke-width:2px,shape:cylinder;
 
-%% Deployment Nodes
-subgraph Browser["«node» Browser (User Device)"]
-    ClientApp["«component» Next.js Client App"]
-    AccountPage["«component» AccountPage"]
-    HelpPage["«component» HelpPage"]
-    WrappedPage["«component» WrappedPage"]
-    ScrapbookDetailPage["«component» ScrapbookDetailPage"]
-    UserContext["«component» UserContext"]
-    PostDetailModal["«component» PostDetailModal"]
+    %% ------------------- NODES & COMPONENTS -------------------
+    
+    actor User as "Browser User"
 
-    ClientApp --> AccountPage
-    ClientApp --> HelpPage
-    ClientApp --> WrappedPage
-    ClientApp --> ScrapbookDetailPage
-    ClientApp --> UserContext
-    ClientApp --> PostDetailModal
-end
+    %% NODE: FRONTEND / BROWSER
+    subgraph BrowserNode ["«node» Browser / Frontend Host (Vercel)"]
+        direction TB
+        
+        subgraph NextClient ["«component» Next.js App (Client)"]
+            direction TB
+            
+            %% Sub-components
+            UserContext["«component» UserContext"]
+            AccountPage["«component» AccountPage"]
+            HelpPage["«component» HelpPage"]
+            
+            subgraph WrappedContext ["Wrapped Feature"]
+                WrappedPage["«component» WrappedPage"]
+                Heatmap["«component» ActivityHeatmap"]
+                WrappedPage --> Heatmap
+            end
+            
+            subgraph SBContext ["Scrapbook Feature"]
+                SBDetail["«component» ScrapbookDetailPage"]
+            end
+            
+            PostModal["«component» PostDetailModal"]
+            
+            %% Internal Links for context
+            SBDetail -.-> PostModal
+        end
+    end
 
-subgraph FrontendHost["«node» Frontend Host (Vercel)"]
-    ClientBuild["«artifact» Next.js Build Output"]
-end
+    %% NODE: API HOST
+    subgraph APIHostNode ["«node» API Host (Node/Express)"]
+        APIServer["«component» API Server<br/>(REST Endpoints: Users, Posts, Scrapbooks, Auth)"]
+    end
 
-subgraph APIHost["«node» API Host (Express Server)"]
-    APIServer["«component» API Server"]
-    ServerBuild["«artifact» Server Build"]
-end
+    %% NODE: DATABASE HOST
+    subgraph DBHostNode ["«node» DB Host (Mongo/Postgres)"]
+        Database[("«component» Database")]
+    end
 
-subgraph DBHost["«node» Database Host (MongoDB)"]
-    Database["«component» Database"]
-end
+    %% NODE: CDN
+    subgraph CDNHostNode ["«node» CDN (UploadThing)"]
+        CDN["«component» UploadThing Service"]
+    end
 
-subgraph CDNHost["«node» UploadThing CDN"]
-    UploadThing["«component» UploadThing"]
-end
+    %% ------------------- RELATIONSHIPS -------------------
 
-%% Connectors
-Browser -->|HTTPS Request| APIServer
-Browser -->|Image Request| UploadThing
-APIServer -->|Database CRUD| Database
+    %% User to UI
+    User -->|"Provides UI Events"| NextClient
 
-FrontendHost --> Browser
-APIHost --> Browser
+    %% Client to API (HTTPS)
+    NextClient -- "HTTPS (credentials: include)<br/>REST: /api/users, /api/scrapbooks" --> APIServer
+
+    %% Client to CDN (Assets)
+    NextClient -.-> |"GET Image Assets (URL)"| CDN
+
+    %% API to Database
+    APIServer -- "Data Persistence (CRUD)<br/>DB Driver" --> Database
+
+    %% API to CDN (Webhooks/Mgmt)
+    APIServer -.-> |"Webhooks/Mgmt"| CDN
+
+    %% ------------------- APPLY STYLES -------------------
+    class BrowserNode,APIHostNode,DBHostNode,CDNHostNode deploymentNode;
+    class NextClient,APIServer,CDN component;
+    class Database database;
+    class UserContext,AccountPage,HelpPage,WrappedPage,Heatmap,SBDetail,PostModal subComponent;
