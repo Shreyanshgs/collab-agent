@@ -24,10 +24,12 @@ graph TD
     classDef component fill:#ffffff,stroke:#2b6cb0,stroke-width:2px;
     classDef subComponent fill:#ebf8ff,stroke:#4299e1,stroke-width:1px,stroke-dasharray: 0;
     classDef database fill:#ffffff,stroke:#2b6cb0,stroke-width:2px,shape:cylinder;
+    classDef userNode fill:#ffffff,stroke:#000,stroke-width:2px;
 
     %% ------------------- NODES & COMPONENTS -------------------
     
-    actor User as "Browser User"
+    %% FIX: Changed from 'actor' to a circle node
+    User(("Browser User")):::userNode
 
     %% NODE: FRONTEND / BROWSER
     subgraph BrowserNode ["«node» Browser / Frontend Host (Vercel)"]
