@@ -18,82 +18,51 @@
 
 
 ```mermaid
-graph TD
-    %% ------------------- STYLING -------------------
-    classDef deploymentNode fill:#eeeeee,stroke:#333,stroke-width:2px;
-    classDef component fill:#ffffff,stroke:#2b6cb0,stroke-width:2px;
-    classDef subComponent fill:#ebf8ff,stroke:#4299e1,stroke-width:1px,stroke-dasharray: 0;
-    classDef database fill:#ffffff,stroke:#2b6cb0,stroke-width:2px,shape:cylinder;
-    classDef userNode fill:#ffffff,stroke:#000,stroke-width:2px;
+flowchart LR
+  subgraph Client["Web Client (Next.js)"]
+    C[UI Pages & Client Components\nclient/app/*]
+  end
 
-    %% ------------------- NODES & COMPONENTS -------------------
-    
-    %% FIX: Changed from 'actor' to a circle node
-    User(("Browser User")):::userNode
+  subgraph API["API Layer (Next.js API routes / backend)"]
+    A[Posts API]\n
+    B[Scrapbooks API]\n
+    D[Wrapped API]\n
+    E[Account API]\n
+    F[Auth API]
+  end
 
-    %% NODE: FRONTEND / BROWSER
-    subgraph BrowserNode ["«node» Browser / Frontend Host (Vercel)"]
-        direction TB
-        
-        subgraph NextClient ["«component» Next.js App (Client)"]
-            direction TB
-            
-            %% Sub-components
-            UserContext["«component» UserContext"]
-            AccountPage["«component» AccountPage"]
-            HelpPage["«component» HelpPage"]
-            
-            subgraph WrappedContext ["Wrapped Feature"]
-                WrappedPage["«component» WrappedPage"]
-                Heatmap["«component» ActivityHeatmap"]
-                WrappedPage --> Heatmap
-            end
-            
-            subgraph SBContext ["Scrapbook Feature"]
-                SBDetail["«component» ScrapbookDetailPage"]
-            end
-            
-            PostModal["«component» PostDetailModal"]
-            
-            %% Internal Links for context
-            SBDetail -.-> PostModal
-        end
-    end
+  subgraph Auth["Auth Service (NextAuth/OIDC/JWT)"]
+    AUTH[Auth Provider]
+  end
 
-    %% NODE: API HOST
-    subgraph APIHostNode ["«node» API Host (Node/Express)"]
-        APIServer["«component» API Server<br/>(REST Endpoints: Users, Posts, Scrapbooks, Auth)"]
-    end
+  subgraph Data["Database"]
+    DB[(Users, Posts, Photos, Tags, Scrapbooks, Stats)]
+  end
 
-    %% NODE: DATABASE HOST
-    subgraph DBHostNode ["«node» DB Host (Mongo/Postgres)"]
-        Database[("«component» Database")]
-    end
+  subgraph Storage["Media Storage (S3/Cloud)"]
+    S3[(Image Objects)]
+  end
 
-    %% NODE: CDN
-    subgraph CDNHostNode ["«node» CDN (UploadThing)"]
-        CDN["«component» UploadThing Service"]
-    end
+  CDN[CDN / Public URLs]
+  Worker["Wrapped Stats Worker (optional)"]
 
-    %% ------------------- RELATIONSHIPS -------------------
+  C -->|REST / fetch| A
+  C -->|REST / fetch| B
+  C -->|REST / fetch| D
+  C -->|REST / fetch| E
+  C -->|REST / fetch| F
 
-    %% User to UI
-    User -->|"Provides UI Events"| NextClient
+  A -->|SQL/ORM| DB
+  B -->|SQL/ORM| DB
+  D -->|SQL/ORM| DB
+  E -->|SQL/ORM| DB
 
-    %% Client to API (HTTPS)
-    NextClient -- "HTTPS (credentials: include)<br/>REST: /api/users, /api/scrapbooks" --> APIServer
+  A -->|Object Storage SDK| S3
+  B -->|Object Storage SDK| S3
 
-    %% Client to CDN (Assets)
-    NextClient -.-> |"GET Image Assets (URL)"| CDN
+  S3 --> CDN
+  C -->|CDN URLs| CDN
 
-    %% API to Database
-    APIServer -- "Data Persistence (CRUD)<br/>DB Driver" --> Database
-
-    %% API to CDN (Webhooks/Mgmt)
-    APIServer -.-> |"Webhooks/Mgmt"| CDN
-
-    %% ------------------- APPLY STYLES -------------------
-    class BrowserNode,APIHostNode,DBHostNode,CDNHostNode deploymentNode;
-    class NextClient,APIServer,CDN component;
-    class Database database;
-    class UserContext,AccountPage,HelpPage,WrappedPage,Heatmap,SBDetail,PostModal subComponent;
+  API -->|OIDC/JWT| AUTH
+  Worker -->|SQL/ORM| DB
+  Worker -. optional stats gen .-> D
