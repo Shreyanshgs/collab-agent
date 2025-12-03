@@ -20,18 +20,14 @@
 ```mermaid
 flowchart TB
 
-%% ================
-%% DEPLOYMENT NODES
-%% ================
-
+%% Deployment Nodes
 subgraph Browser["«node» Browser (User Device)"]
-    ClientApp["«component» Next.js Client App\n- Renders pages/UI\n- Calls REST API\n- Loads images from CDN"]
-
+    ClientApp["«component» Next.js Client App"]
     AccountPage["«component» AccountPage"]
     HelpPage["«component» HelpPage"]
-    WrappedPage["«component» WrappedPage\nuses ActivityHeatmap"]
+    WrappedPage["«component» WrappedPage"]
     ScrapbookDetailPage["«component» ScrapbookDetailPage"]
-    UserContext["«component» UserContext (useUser)"]
+    UserContext["«component» UserContext"]
     PostDetailModal["«component» PostDetailModal"]
 
     ClientApp --> AccountPage
@@ -42,34 +38,27 @@ subgraph Browser["«node» Browser (User Device)"]
     ClientApp --> PostDetailModal
 end
 
-
-subgraph FrontendHost["«node» Frontend Host (e.g., Vercel)"]
+subgraph FrontendHost["«node» Frontend Host (Vercel)"]
     ClientBuild["«artifact» Next.js Build Output"]
 end
 
-
-subgraph APIHost["«node» API Host (Node.js/Express)"]
-    APIServer["«component» API Server\nProvides:\n- /api/users/*\n- /api/auth/*\n- /api/posts/*\n- /api/scrapbooks/*\nRequires:\n- DB Driver\n- UploadThing Webhooks"]
+subgraph APIHost["«node» API Host (Express Server)"]
+    APIServer["«component» API Server"]
     ServerBuild["«artifact» Server Build"]
 end
 
-
 subgraph DBHost["«node» Database Host (MongoDB)"]
-    Database["«component» Database\nCollections:\n- users\n- posts\n- scrapbooks\n- stats"]
+    Database["«component» Database"]
 end
-
 
 subgraph CDNHost["«node» UploadThing CDN"]
-    UploadThing["«component» UploadThing\nProvides public image URLs"]
+    UploadThing["«component» UploadThing"]
 end
 
-
-%% ================
-%% CONNECTORS
-%% ================
-Browser -->|HTTPS\nREST Requests\n(credentials: include)| APIServer
-Browser -->|HTTPS\nGET image URLs| UploadThing
-APIServer -->|CRUD Operations| Database
+%% Connectors
+Browser -->|HTTPS Request| APIServer
+Browser -->|Image Request| UploadThing
+APIServer -->|Database CRUD| Database
 
 FrontendHost --> Browser
 APIHost --> Browser
