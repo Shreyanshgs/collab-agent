@@ -16,6 +16,7 @@
 - **AI Model:** Google Generative AI (Gemini)
 - **Other:** Web Audio API, FormData, REST
 
+<img width="1473" height="1121" alt="ERD drawio" src="https://github.com/user-attachments/assets/8b6dd27c-b197-45b3-ba61-172c139d06b9" />
 
 ```mermaid
 flowchart LR
